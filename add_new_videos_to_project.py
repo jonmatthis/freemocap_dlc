@@ -19,7 +19,7 @@ def add_videos_to_dlc_project(config_path: Path, video_directory: Path, video_ex
 
 if __name__ == "__main__":
 
-    config_path = Path(r"D:\sfn\michael wobble\Wobble Board Proect-Aaron-2024-01-31\config.yaml")
-    video_directory = Path(r"D:\sfn\michael wobble\recording_16_53_56_gmt-5\synchronized_videos")
+    config_path = Path(r"D:\sfn\michael_wobble\wobble_board_project_3-Aaron-2024-02-12\config.yaml")
+    video_directory = Path(r"D:\sfn\michael_wobble\recording_16_53_56_gmt-5\synchronized_videos")
 
     add_videos_to_dlc_project(config_path, video_directory)

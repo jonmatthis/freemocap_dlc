@@ -30,11 +30,11 @@ def create_dlc_project(config: ProjectConfig) -> str:
 if __name__ == "__main__":
     # Define the project configuration
 
-    video_directory_path = Path(r'D:\sfn\michael wobble\recording_12_07_09_gmt-5__MDN_wobble_3\synchronized_videos')
-    working_directory_path = Path(r'D:\sfn\michael wobble')
+    video_directory_path = Path(r'D:\sfn\michael_wobble\recording_12_07_09_gmt-5__MDN_wobble_3\synchronized_videos')
+    working_directory_path = Path(r'D:\sfn\michael_wobble')
 
     config = ProjectConfig(
-        project_name="Wobble Board Proect",
+        project_name="wobble_board_project_3",
         experimenter_name="Aaron",
         video_directory= video_directory_path,
         working_directory= working_directory_path,

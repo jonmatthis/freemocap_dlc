@@ -2,7 +2,7 @@ import deeplabcut
 from pathlib import Path
 import os
 
-config_path = r"D:\sfn\michael wobble\Wobble Board Proect-Aaron-2024-01-31\config.yaml"
+config_path = r"D:\sfn\michael_wobble\wobble_board_project_3-Aaron-2024-02-12\config.yaml"
 
 def process_recording_folder(path_to_recording_folder):
     path_to_recording_folder = Path(path_to_recording_folder)
@@ -32,4 +32,4 @@ def process_session_folder(session_folder):
 
 if __name__ == '__main__':
     # process_session_folder(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib')
-    process_recording_folder(r'D:\sfn\michael wobble\recording_10_03_16_gmt-5')
+    process_recording_folder(r'D:\sfn\michael_wobble\recording_12_07_09_gmt-5__MDN_wobble_3')

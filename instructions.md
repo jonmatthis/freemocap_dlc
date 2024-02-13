@@ -24,7 +24,7 @@ are installed for your GPU to be recognized and used
 - Below are two methods of installation that have both seemed to work for me. In the first, you install CUDA system-wide. In the second, you install it directly into the environment. My initial thoughts on which is 
   optimal would probably depend on ease-of-use and whether you might have more recent CUDA versions and are worried about conflicts
 
-### Installing CUDA system-wide
+### Option 1: Installing CUDA system-wide
 - You can download CUDA 11.2 from [here](https://developer.nvidia.com/cuda-11.2.0-download-archive?target_os=Windows&target_arch=x86_64)
 - You can download cudnn 8.1.1 or 8.1.0 from Nvidia's archive [here](https://developer.nvidia.com/rdp/cudnn-archive)
     - To be able to download it, I had to make a developer's account with Nvidia. I also had to specifically *opt in to the developer program* to use it. At the time of writing this I regret to say I don't remember 
@@ -35,7 +35,7 @@ are installed for your GPU to be recognized and used
     - copy the files from `include` in cudnn and copy/move them over to the `include` folder of CUDA
     - copy the files from the `lib\x64` folder into the `lib\x64` folder of CUDA (not into the `lib` folder, into the `x64` folder)
 
-### Installing CUDA and cudnn into your environment
+### Option 2: Installing CUDA and cudnn into your environment
 - In your Anaconda environment, you can use condaforge to install CUDA and cudnn
 - Run this command in your Anaconda prompt `conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0`
     - *Note:* I got these commands from tensorflow's installation website for Windows [here](https://www.tensorflow.org/install/pip#windows-native), take a look for more info

@@ -1,8 +1,9 @@
-https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html
 
-built under the assumption of freemocap use
-
-*note: these are all instructions for a Windows machine. I'm not certain if they would work for other systems, particularly when it comes to the ins and outs of CUDA/TensorFlow/cudnn compatibility 
+# Some notes before you start:
+1) This isn't meant to replace the DeepLabCut instructions - just supplement them and clear up some things that took me a long time to figure out (such as installation). It is still necessary to read over the 
+DeepLabCut user guide [here](https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html). When looking at these instructions, I would read the DeepLabCut guide for that section first, and then look at these ones
+2) Some of these functions are built under the assumptions that its being used on FreeMoCap data/recordings. One function in particular for example, will look for the `synchronized_videos` folder in a FreeMoCap recording folder. I've tried to be clear about when this happens. 
+3) These are all instructions for a Windows machine. I'm not certain if they would work for other systems, particularly when it comes to the ins and outs of CUDA/TensorFlow/cudnn compatibility 
 
 # Installing DeepLabCut
 - Create an Anaconda 3.10 environment (I believe 3.10 is the latest version that can be handled by their tensorflow version, need to double-check)

@@ -12,14 +12,14 @@ def add_videos_to_dlc_project(config_path: Path, video_directory: Path, video_ex
         return
 
     # Add new videos to the DeepLabCut project
-    deeplabcut.add_new_videos(config_path, new_videos)
+    deeplabcut.add_new_videos(config=config_path, videos=new_videos, copy_videos=False)
 
     print(f"Added {len(new_videos)} new videos to the project.")
 
 
 if __name__ == "__main__":
 
-    config_path = Path(r"D:\sfn\michael_wobble\wobble_board_project_3-Aaron-2024-02-12\config.yaml")
+    config_path = Path(r"D:\sfn\michael_wobble\wobble_board_project_4-Aaron-2024-02-19\config.yaml")
     video_directory = Path(r"D:\sfn\michael_wobble\recording_16_53_56_gmt-5\synchronized_videos")
 
     add_videos_to_dlc_project(config_path, video_directory)

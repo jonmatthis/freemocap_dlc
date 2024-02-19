@@ -1,23 +1,52 @@
 import deeplabcut
 from pathlib import Path
-import os
+import shutil
 
-config_path = r"D:\sfn\michael_wobble\wobble_board_project_3-Aaron-2024-02-12\config.yaml"
+config_path = r"D:\sfn\michael_wobble\wobble_board_project_4-Aaron-2024-02-19\config.yaml"
+
+
+
+
+def copy_and_rename_videos(source_folder:Path, destination_folder:Path, identifier:str):
+    # Ensure destination exists
+    copied_videos = []
+
+    for video in source_folder.glob('*.mp4'):
+        new_name = f"{identifier}_{video.name}"
+        dest_path = destination_folder / new_name
+        shutil.copy(video, dest_path)
+        copied_videos.append(dest_path)
+
+    return copied_videos
 
 def process_recording_folder(path_to_recording_folder):
     path_to_recording_folder = Path(path_to_recording_folder)
+    path_to_video_folder = path_to_recording_folder / 'synchronized_videos'
+    
+    dlc_folder = path_to_recording_folder / 'dlc_data'
+    dlc_folder.mkdir(parents=True, exist_ok=True)
+    
+    videos_to_analyze_folder = dlc_folder / 'videos_to_analyze'
+    videos_to_analyze_folder.mkdir(parents=True, exist_ok=True)
 
-    path_to_video_folder = str(path_to_recording_folder/'synchronized_videos')
-    dest_folder = str(path_to_recording_folder/'dlc_data')
+    # Generate a unique identifier for the folder based on its path or another characteristic
+    video_identifier = path_to_recording_folder.stem  # Using folder name as identifier
 
-    deeplabcut.analyze_videos(config=config_path, videos=path_to_video_folder, save_as_csv=True, destfolder=dest_folder)
+    # Copy and rename videos to the 'videos_to_analyze' subfolder with unique identifier
+    copy_and_rename_videos(source_folder=path_to_video_folder, destination_folder=videos_to_analyze_folder, identifier=video_identifier)
 
-    video_list = sorted(list(Path(path_to_video_folder).glob('*.mp4')))
+    deeplabcut.analyze_videos(config=config_path, videos= str(videos_to_analyze_folder), save_as_csv=True, destfolder=str(dlc_folder))
 
+    video_list = sorted(list(Path(videos_to_analyze_folder).glob('*.mp4')))
     for video in video_list:
-        deeplabcut.filterpredictions(config=config_path, video=str(video), destfolder=dest_folder, save_as_csv=True)
+        deeplabcut.filterpredictions(config=config_path, video=str(video), destfolder=str(dlc_folder), save_as_csv=True)
 
-    deeplabcut.create_labeled_video(config=config_path, videos=path_to_video_folder, destfolder=dest_folder)
+    deeplabcut.create_labeled_video(config=config_path, videos= str(videos_to_analyze_folder), destfolder=str(dlc_folder))
+
+
+
+
+
 
 def process_session_folder(session_folder):
     # Convert the session folder path to a pathlib Path object
@@ -32,4 +61,4 @@ def process_session_folder(session_folder):
 
 if __name__ == '__main__':
     # process_session_folder(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib')
-    process_recording_folder(r'D:\sfn\michael_wobble\recording_12_07_09_gmt-5__MDN_wobble_3')
+    process_recording_folder(r'D:\sfn\michael_wobble\recording_16_53_56_gmt-5')

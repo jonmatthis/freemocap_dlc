@@ -92,6 +92,7 @@ skeleton:
 ## **For the next few sections (Extracting Frames until Evaluate Network), no wrapper functions are needed, so I made a [Jupyter notebook here](/run_deeplabcut.ipynb) called `run_deeplabcut.ipynb` to list out what the headless commands are**
 # Extracting Frames
 - Now that videos have been added, we'll want to extract frames from them to label. The `extract_frames` command will atuomatically extract frames to label from each video
+- run `deeplabcut.extract_frames()` from the [jupyter notebook here](/run_deeplabcut.ipynb)
 - The `numframes2pick` in the `config.yaml` file is the number of frames that gets extracted. Default is 20 - I set it to 10.
 - You might note that there's a `userfeedback` flag in the `extract_frames` command, but that just prompts  you to type in `y` or `n` before it proceeds with extraction for *each* video, so I wouldn't recommend it. It's annoying. 
 - Extracted frames can be found in the `labeled-data` folder
@@ -100,14 +101,17 @@ skeleton:
 # Labeling Data
 - I cannot get this to run headlessly. The labeling Napari GUI crashes whenever I bring it up
     - to make it work I had to run the GUI (`python -m deeplabcut`) and open the labeling GUI from there
-    - *update:* I ran this command from a Jupyter notebook cell for the first time today and I think it worked? 
-- When labeling, the GUI will bring up folders of the extracted frame data. Choose one of them to start labeling. 
+    - *update:* I ran this command from a Jupyter notebook cell for the first time today and I think it worked?
+- Run `deeplabcut.label_frames()` from the jupyter notebook 
+- A Napari GUI should show up. Sometimes the GUI is hidden behind your other windows, but you should see it appear in the taskbar
+- Use `File > Open Folder` to open the folder of extracted frames. You'll find these folders in your `dlc_project_path/labeled-data` folder, with a different folder for each video. You'll have to label each folder,
+so pick one to start. 
 - Some notes about the Napari GUI
     - On the bottom left, you'll see the color associated with each marker. On the bottom right, you'll see a dropdown menu, the one selected is the marker currently being labeled 
     - There are different modes of how you can label the marker (located in the top right I think)
         - `sequential` and `quick` have you label every marker per frame before moving to the next frame
-        - `loop` lets use label one marker on every frame before moving to the next one. This has been my preferred method so far
-- When finished labeling, use `Ctrl + S` to save the data, then quit the GUI
+        - `loop` lets use label one marker on every frame before moving to the next marker. This is my preferred method
+- When finished labeling, use `Ctrl + S` to save the data. I've found that to label the next folder, you need to restart the GUI and open the new folder, but if someone finds a different path lmk. 
 
 # Check Labels
 - Creates a folder of images in the `labeled_data` folder of the DLC project that shows you where the labels were placed
@@ -128,20 +132,34 @@ skeleton:
 - this is the guy that lets you use the model you created on other videos. I've made a wrapper function that does this and more [here](/analyze_videos.py) called `analyze_videos.py`
 - the `process_recording_folder` function:
     - takes in the path to the `freemocap` recording folder whose videos you want to analyze
-    - it analyzes the videos from the `synchronized_videos` folder
-    - creates a folder called `dlc_data` in the `freemocap` recording folder
+    - creates a `dlc_data` folder 
+    - it copies the videos from the `synchronized_videos` folder into a created subfolder in the `dlc_data`
+        - *NOTE*: the reason I copy the videos is because as they're copied, they each get an identifier with the recording name. In [Extracting Frames](#extracting-frames), you can see the note I made at the bottom about whether having videos of the same name would be a problem. As of writing this note, I believe they will actually be a problem, so this is a stop-gap measure to work around that, so that when you extract outlier frames below, frames from different videos will save to unique folders instead of the same one. The trade-off is the space/time needed to unncessarily copy videos just so that they have a different name. 
     - saves `csv` data from the analysis into the `dlc_data` folder
     - Uses `deeplabcut.filterpredictions` to filter the data and saves that data into the `dlc_data` folder (the filtered data will have `_filtered` in the name)
     - Creates labeled videos and saves them into the `dlc_data` folder
 - the `process_session` function is for batch-processing a bunch of recordings in the same session folder. This is for example, how I applied the deeplabcut model I trained for the prosthetic data to all the prosthetic recordings 
 
-# Refining the model
-- this is where I've hit an endpoint for now, because of my issues getting the data refining to work. In theory, there's 3 things you need to do:
-1) Extract outlier frames from the existing data (as seen [here](/extract_outlier_frames.py)) in `extract_outlier_frames.py`
-    - the key thing here is that this function takes in the original videos and the dlc_data, so you need to give it a path to the `synchronized_videos` folder and the `dlc_data` folder to get this to work properly
-2) Run the Refine Labels GUI - which is where I've hit an endpoint
-3) Run the `merge_training_set` command to create a new training set, and then retrain the network
+# Extract Outlier Frames
+- This function takes the path to where the videos that you want to analyze are, and the path where the dlc data is stored (since we save the data into the dlc_data folder, but store the videos to analyze in a subfolder, we need both paths.)
+- `Automatic = True` means that it won't prompt you for user feedback to extract the outliers for each
+- The extracted frames should be saved out in `your_dlc_project_folder/labeled-folders/[insert_video_name_here]` for each video. Each video you extracted from should have its own folder
 
-# Once you have a model you like
-- Run the `analyze_videos.py` functions on all the videos you want data from
+
+# Refining the labels
+- Use the `refine_labels` function in the Jupyter notebook
+- After running this, a DeepLabCut GUI should pop up. Similar to the first time you labeled frames, you'll want to open the folders with the frames you extracted in the last step.
+- After choosing a folder, **click the machine-labels layer on the left side**, those are the labels you refine
+- You can press the letter 'e' on your keyboard and it should bring up little outlines around the markers - if they're in red, it means they're especially off
+- Press the number '3' to change to the marker selection tool and start dragging the labels around that need refining
+- After finishing, save with `Ctrl + S`, and load the next folder
+
+# After you've refined the labels and are ready to retrain the model 
+- Run the `merge_dataset` code block in the Jupyter notebook. This should merge your datasets to create a new iteration of data, and then create a new training dataset based off of that. 
+- After that, just go ahead and run the `train_network` command again
+
+# Re-analyzing videos
+- You can use the same `analyze_videos.py` functions on all the videos you want data from. As a note though, re-analyzing the videos will overwrite the existing saved data, so I'll copy the existing data into a subfolder called `iteration_[x]` to hold onto it just in case
+
+
 - I have methods to compile all the saved out csvs into 2d freemocap format and then reconstruct them - if you manage to get this far before I've copied them over into this repo and written then up then just let me know

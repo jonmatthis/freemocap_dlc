@@ -61,4 +61,4 @@ def process_session_folder(session_folder):
 
 if __name__ == '__main__':
     # process_session_folder(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib')
-    process_recording_folder(r'D:\sfn\michael_wobble\recording_16_53_56_gmt-5')
+    process_recording_folder(r'D:\sfn\michael_wobble\recording_13_56_45_gmt-5')

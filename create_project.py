@@ -34,7 +34,7 @@ if __name__ == "__main__":
     working_directory_path = Path(r'D:\sfn\michael_wobble')
 
     config = ProjectConfig(
-        project_name="wobble_board_project_3",
+        project_name="wobble_board_project_4",
         experimenter_name="Aaron",
         video_directory= video_directory_path,
         working_directory= working_directory_path,

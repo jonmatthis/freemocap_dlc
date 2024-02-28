@@ -12,7 +12,7 @@
 
 # Installing DeepLabCut
 
-- Create an Anaconda 3.10 environment (I believe 3.10 is the latest version that can be handled by their tensorflow
+- Create an python3.10 environment (I believe 3.10 is the latest version that can be handled by their tensorflow
   version, need to double-check)
 - **Installation:**: `pip install deeplabcut[tf,gui]`
     - this installs both tensorflow and the deeplabcut GUI

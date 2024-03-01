@@ -1,14 +1,12 @@
 # %% setup
 import deeplabcut
 
-config_path = r"D:\\deeplabcut-projects\\pooh-the-cat-jsm-2024-02-28\\config.yaml"
-pooh_video_clip = [
-    r"D:\deeplabcut-projects\pooh-the-cat-jsm-2024-02-28\videos\GX010034_clip1.mp4"
-]
+# config_path = r"D:\\deeplabcut-projects\\pooh-the-cat-jsm-2024-02-28\\config.yaml"
+config_path = r"D:\deeplabcut-projects\pooh-take-2-jsm-2024-02-29\config.yaml"
 
-pooh_shortish_clips = [
-    r"D:\deeplabcut-projects\pooh-the-cat-jsm-2024-02-28\videos\GX01003_clip1.mp4",
-    r"D:\deeplabcut-projects\pooh-the-cat-jsm-2024-02-28\videos\GX01003_clip2.mp4",
+
+pooh_clips = [
+    r"D:\deeplabcut-projects\pooh-the-cat-jsm-2024-02-28\videos\GH010071_clip16.mp4",    
 ]
 
 # %% Extract frames
@@ -40,7 +38,7 @@ deeplabcut.train_network(
     shuffle=1,
     trainingsetindex=0,
     max_snapshots_to_keep=5,
-    autotune=False,
+    autotune=True,
     displayiters=10,
     saveiters=1000,
     maxiters=300000,
@@ -50,32 +48,42 @@ deeplabcut.train_network(
 # %% Evaluate network
 deeplabcut.evaluate_network(config_path, Shuffles=[1], plotting=True)
 
-# # %% Filter predictions
+# %% Analyze videos
+deeplabcut.analyze_videos(config_path, pooh_clips, save_as_csv=True)
 
-# deeplabcut.filterpredictions(
-#     config_path,
-#     pooh_video_clip,
-#     shuffle=1,
-#     trainingsetindex=0,
-#     filtertype="arima",
-#     p_bound=0.01,
-#     ARdegree=3,
-#     MAdegree=1,
-#     alpha=0.01,
-# )
+# %% Filter predictions
+
+deeplabcut.filterpredictions(
+    config_path,
+    pooh_clips,
+    shuffle=1,
+    trainingsetindex=0,
+    filtertype="arima",
+    p_bound=0.01,
+    ARdegree=3,
+    MAdegree=1,
+    alpha=0.01,
+)
 
 # %% Plot trajectories
 
-deeplabcut.plot_trajectories(config_path, pooh_video_clip)
-
-# %% Analyze videos
-deeplabcut.analyze_videos(config_path, pooh_shortish_clips, save_as_csv=True)
+deeplabcut.plot_trajectories(config_path, pooh_clips)
 
 # %% Create labeled video
-deeplabcut.create_labeled_video(config_path, pooh_shortish_clips, videotype=".mp4")
+deeplabcut.create_labeled_video(
+    config_path,
+    [pooh_clips[0]],
+    trailpoints=1,
+    pcutoff=0.1,
+    draw_skeleton=True,
+    videotype=".mp4",
+    overwrite=True,
+)
 
 # %% Extract outlier frames
-deeplabcut.extract_outlier_frames(config_path, pooh_shortish_clips, p_bound=0.0001)
+deeplabcut.extract_outlier_frames(
+    config_path, pooh_clips, p_bound=0.0001, automatic=True
+)
 
 
 # %% Refine labels

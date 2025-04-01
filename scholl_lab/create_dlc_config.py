@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def create_new_project(
     project: str,
     experimenter: str,
@@ -10,6 +12,7 @@ def create_new_project(
     bodyparts: list[str] | None = None,
     skeleton: list[list[str]] | None = None,
 ):
+    ##NOTE: this function is a modified version of the DLC one, did not update the docstrings below - Aaron
     r"""Create the necessary folders and files for a new project without requiring videos.
 
     Creating a new project involves creating the project directory, sub-directories and
@@ -106,30 +109,13 @@ def create_new_project(
         except ImportError:
             warnings.warn("VideoReader could not be imported. Video-related functionality will be limited.")
             
-    months_3letter = {
-        1: "Jan",
-        2: "Feb",
-        3: "Mar",
-        4: "Apr",
-        5: "May",
-        6: "Jun",
-        7: "Jul",
-        8: "Aug",
-        9: "Sep",
-        10: "Oct",
-        11: "Nov",
-        12: "Dec",
-    }
 
-    date = dt.today()
-    month = months_3letter[date.month]
-    day = date.day
-    d = str(month[0:3] + str(day))
-    date = dt.today().strftime("%Y-%m-%d")
+
+
     if working_directory is None:
         working_directory = "."
     wd = Path(working_directory).resolve()
-    project_name = "{pn}-{exp}-{date}".format(pn=project, exp=experimenter, date=date)
+    project_name = project
     project_path = wd / project_name
 
     # Create project and sub-directories
@@ -347,7 +333,7 @@ def create_new_project(
     cfg_file["scorer"] = experimenter
     cfg_file["video_sets"] = video_sets
     cfg_file["project_path"] = str(project_path)
-    cfg_file["date"] = d
+    cfg_file["date"] = 'arbitrary_date'
     cfg_file["cropping"] = False
     cfg_file["start"] = 0
     cfg_file["stop"] = 1
@@ -392,7 +378,7 @@ def create_new_project(
     if skeleton is not None:
         print(f"\nUsing custom skeleton configuration with {len(skeleton)} connections")
         
-    return projconfigfile
+    return projconfigfile, project_name
 
 
 if __name__ == '__main__':

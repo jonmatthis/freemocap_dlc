@@ -25,10 +25,10 @@ def build_dlc_formatted_header(labels_dataframe: pd.DataFrame, scorer_name: str)
     return header_df, joint_names
 
 
-def run(path_to_recording: Path,
+def fill_in_labelled_data_folder(path_to_recording: Path,
         path_to_dlc_project_folder: Path,
         path_to_image_labels_csv: Path,
-        scorer_name: str = "Scorer"
+        scorer_name: str = "scorer"
         ):
     path_to_videos_for_training = path_to_recording / 'synchronized_videos'  # Will need to adjust for ferret lab path
     recording_name = path_to_recording.stem
@@ -111,6 +111,6 @@ if __name__ == '__main__':
     path_to_dlc_project_folder = Path(r"C:\Users\Aaron\Documents\your-project-name-Aaron-2025-04-01")
     path_to_image_labels_csv = Path(r"C:\Users\Aaron\Downloads\output.csv")
 
-    run(path_to_recording=Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data"),
+    fill_in_labelled_data_folder(path_to_recording=Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data"),
         path_to_dlc_project_folder=path_to_dlc_project_folder,
         path_to_image_labels_csv=path_to_image_labels_csv)

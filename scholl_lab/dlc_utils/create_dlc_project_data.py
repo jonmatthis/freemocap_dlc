@@ -25,13 +25,11 @@ def build_dlc_formatted_header(labels_dataframe: pd.DataFrame, scorer_name: str)
     return header_df, joint_names
 
 
-def fill_in_labelled_data_folder(path_to_recording: Path,
+def fill_in_labelled_data_folder(path_to_videos_for_training: Path,
         path_to_dlc_project_folder: Path,
         path_to_image_labels_csv: Path,
         scorer_name: str = "scorer"
         ):
-    path_to_videos_for_training = path_to_recording / 'synchronized_videos'  # Will need to adjust for ferret lab path
-    recording_name = path_to_recording.stem
 
     labels_dataframe = pd.read_csv(path_to_image_labels_csv)
     per_video_dataframe = dict(

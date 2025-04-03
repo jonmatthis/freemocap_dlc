@@ -121,7 +121,7 @@ def create_new_project(
     # Create project and sub-directories
     if not DEBUG and project_path.exists():
         print('Project "{}" already exists!'.format(project_path))
-        return os.path.join(str(project_path), "config.yaml")
+        return os.path.join(str(project_path), "config.yaml"), project_name
     
     # Create main directories
     video_path = project_path / "videos"

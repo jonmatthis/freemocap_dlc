@@ -70,7 +70,7 @@ def run_dlc_pipeline(
     config_path, project_name = create_new_project(
         project=full_project_name,
         experimenter=experimenter,
-        working_directory=output_directory,
+        working_directory=str(output_directory),
         bodyparts=bodyparts,
         skeleton=skeleton
     )
@@ -110,31 +110,43 @@ def run_dlc_pipeline(
     }
 
 if __name__ == "__main__":
-    # Example usage
-    bodyparts = [
-        'left_ear', 'left_eye_inner', 'left_eye_outer', 
-        'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
-    ]
+    # # Example usage
+    # bodyparts = [
+    #     'left_ear', 'left_eye_inner', 'left_eye_outer', 
+    #     'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
+    # ]
     
-    # Create skeleton connections
+    # # Create skeleton connections
+    # skeleton = [
+    #     ['left_ear', 'left_eye_outer'],
+    #     ['left_eye_outer', 'left_eye_inner'],
+    #     ['left_eye_inner', 'nose'],
+    #     ['nose', 'right_eye_inner'],
+    #     ['right_eye_inner', 'right_eye_outer'],
+    #     ['right_eye_outer', 'right_ear']
+    # ]
+
+    bodyparts = [
+        "nose",
+        "right_eye_inner",
+        "left_eye_inner"
+    ]
+
     skeleton = [
-        ['left_ear', 'left_eye_outer'],
-        ['left_eye_outer', 'left_eye_inner'],
-        ['left_eye_inner', 'nose'],
-        ['nose', 'right_eye_inner'],
-        ['right_eye_inner', 'right_eye_outer'],
-        ['right_eye_outer', 'right_ear']
+        ["nose", "right_eye_inner"],
+        ["nose", "left_eye_inner"]
     ]
     
     # Run the pipeline
     project_info = run_dlc_pipeline(
         project_name="freemocap_sample_data_test",
         bodyparts=bodyparts,
-        source_data_path=Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data"),
-        labels_csv_path=Path(r"C:\Users\Aaron\Downloads\output.csv"),
-        output_directory=Path(r"C:\Users\Aaron\Documents"),
-        experimenter="user",
+        source_data_path=(Path.home() / "freemocap_data/recording_sessions/freemocap_test_data"),
+        labels_csv_path=Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/skellyclicker_data/2025-04-02_15-02-27_skellyclicker_output.csv"),
+        output_directory=Path("/Users/philipqueen/DLCtest/"),
+        experimenter="philip",
         skeleton=skeleton
     )
     
     print(f"Project created: {project_info['project_name']}")
+    print(f"\tConfig path: {project_info['config_path']}")

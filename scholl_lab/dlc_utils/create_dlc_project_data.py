@@ -68,8 +68,10 @@ def fill_in_labelled_data_folder(path_to_recording: Path,
                 labeled_frames.append(video_df.iloc[frame_idx]["frame"])
 
                 image_name = f'img{frame_idx:03d}.png'
-                cv2.imwrite(filename=str(dlc_video_folder_path / image_name),
-                            img=frame)
+                image_save_path = dlc_video_folder_path / image_name
+                if not image_save_path.exists():
+                    cv2.imwrite(filename=str(image_save_path),
+                                img=frame)
 
                 # Create the path format for the index
                 image_path = f"labeled-data\\{video_name_wo_extension}\\{image_name}"

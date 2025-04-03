@@ -1,10 +1,11 @@
 from datetime import datetime
+from pathlib import Path
 
 def create_new_project(
     project: str,
     experimenter: str,
     videos: list[str] | None = None,
-    working_directory: str | None = None,
+    working_directory: str | Path | None = None,
     copy_videos: bool = False,
     videotype: str = "",
     multianimal: bool = False,
@@ -97,7 +98,6 @@ def create_new_project(
     import os
     import shutil
     import warnings
-    from pathlib import Path
 
     from deeplabcut import DEBUG
     from deeplabcut.core.engine import Engine
@@ -121,7 +121,7 @@ def create_new_project(
     # Create project and sub-directories
     if not DEBUG and project_path.exists():
         print('Project "{}" already exists!'.format(project_path))
-        return os.path.join(str(project_path), "config.yaml"), project_name
+        return os.path.join(str(project_path), "config.yaml")
     
     # Create main directories
     video_path = project_path / "videos"

@@ -59,6 +59,10 @@ def run_dlc_pipeline(
         save_epochs=training.save_epochs,
         batch_size=training.batch_size
     )
+
+    logger.info(f"Saving config values to {config_path}")
+    training.update_config_yaml(config_path)
+    data.update_config_yaml(config_path)
     
     logger.info(f"Pipeline completed for project: {full_project_name}")
     logger.info(f"Project path: {project_path}")

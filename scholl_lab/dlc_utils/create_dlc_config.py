@@ -333,7 +333,7 @@ def create_new_project(
     cfg_file["scorer"] = experimenter
     cfg_file["video_sets"] = video_sets
     cfg_file["project_path"] = str(project_path)
-    cfg_file["date"] = 'arbitrary_date'
+    cfg_file["date"] = '_' ##NOTE: Find some way to get rid of this 04/02/25 AARON (need to adjust 'get_training_set_folder' in 'auxilliary functions' of deeplabcut)
     cfg_file["cropping"] = False
     cfg_file["start"] = 0
     cfg_file["stop"] = 1
@@ -378,7 +378,7 @@ def create_new_project(
     if skeleton is not None:
         print(f"\nUsing custom skeleton configuration with {len(skeleton)} connections")
         
-    return projconfigfile, project_name
+    return projconfigfile
 
 
 if __name__ == '__main__':

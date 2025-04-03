@@ -1,11 +1,10 @@
-import shutil
 import logging
 from pathlib import Path
 from datetime import datetime
 import deeplabcut
-import numpy as np
 from dlc_utils.create_dlc_config import create_new_project
 from dlc_utils.create_dlc_project_data import fill_in_labelled_data_folder
+from dlc_utils.project_config import ProjectConfig, DataConfig, TrainingConfig
 
 # Configure logging
 logging.basicConfig(
@@ -15,83 +14,35 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_dlc_pipeline(
-    project_name: str, 
-    bodyparts: list[str],
-    source_data_path: str | Path,
-    labels_csv_path: str | Path,
-    output_directory: str | Path | None = None,
-    experimenter: str = "user",
-    skeleton: list[list[str]] | None = None,
+    project: ProjectConfig,
+    data: DataConfig,
+    training: TrainingConfig
 ):
-    """
-    Run the complete DeepLabCut pipeline from project creation to training.
-    
-    Parameters
-    ----------
-    project_name : str
-        Name for the DeepLabCut project
-    bodyparts : list
-        List of bodyparts/keypoints to track
-    source_data_path : str or Path
-        Path to the directory containing the videos
-    labels_csv_path : str or Path
-        Path to the CSV file with labeled frames
-    output_directory : str or Path, optional
-        Directory to create the project in (default: current directory)
-    experimenter : str, optional
-        Name of the experimenter (default: "user")
-    skeleton : list, optional
-        List of connections between bodyparts for visualization
-    
-    Returns
-    -------
-    dict
-        Information about the created project
-    """
-    timestamp = datetime.now().strftime("%Y%m%d")
-    full_project_name = f"{project_name}_{experimenter}_{timestamp}"
-    
-    # Create paths
-    if output_directory is None:
-        output_directory = Path.cwd()
-    else:
-        output_directory = Path(output_directory)
-    
-    source_data_path = Path(source_data_path)
-    labels_csv_path = Path(labels_csv_path)
 
-    # TODO: create copy of skellyclicker CSV in dlc directory for easy loading on iterations
-    new_csv_path = output_directory / labels_csv_path.name
-    try:
-        shutil.copy2(labels_csv_path, new_csv_path)
-    except (IOError, FileNotFoundError, FileExistsError) as e:
-        logger.error(f"Error copying CSV file: {e}")
-        logger.warning(f"Unable to copy labels CSV file to {new_csv_path}")
-    
-    # Make sure output directory exists
-    output_directory.mkdir(exist_ok=True, parents=True)
-    
+    timestamp = datetime.now().strftime("%Y%m%d") 
+    full_project_name = f"{project.name}_{project.experimenter}_{timestamp}"
+    project_path = project.working_directory/full_project_name
+
     logger.info(f"Starting DLC pipeline for project: {full_project_name}")
     
     # Step 1: Create project
     logger.info("Creating project structure...")
-    config_path, project_name = create_new_project(
+    config_path = create_new_project(
         project=full_project_name,
-        experimenter=experimenter,
-        working_directory=str(output_directory),
-        bodyparts=bodyparts,
-        skeleton=skeleton
+        experimenter=project.experimenter,
+        working_directory=project.working_directory,
+        bodyparts=project.bodyparts,
+        skeleton=project.skeleton
     )
     
-    project_path = output_directory / full_project_name
     
     # Step 2: Fill in labeled data
     logger.info("Processing labeled frames...")
     labeled_frames = fill_in_labelled_data_folder(
-        path_to_recording=source_data_path,
+        path_to_videos_for_training=data.folder_of_videos,
         path_to_dlc_project_folder=project_path,
-        path_to_image_labels_csv=labels_csv_path,
-        scorer_name=experimenter
+        path_to_image_labels_csv=data.labels_csv_path,
+        scorer_name= project.experimenter
     )
     
     # Step 3: Create training dataset
@@ -104,7 +55,9 @@ def run_dlc_pipeline(
     logger.info("Training network...")
     deeplabcut.train_network(
         config=config_path,
-        epochs=2,
+        epochs=training.epochs,
+        save_epochs=training.save_epochs,
+        batch_size=training.batch_size
     )
     
     logger.info(f"Pipeline completed for project: {full_project_name}")
@@ -119,43 +72,47 @@ def run_dlc_pipeline(
     }
 
 if __name__ == "__main__":
-    # # Example usage
-    # bodyparts = [
-    #     'left_ear', 'left_eye_inner', 'left_eye_outer', 
-    #     'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
-    # ]
-    
-    # # Create skeleton connections
-    # skeleton = [
-    #     ['left_ear', 'left_eye_outer'],
-    #     ['left_eye_outer', 'left_eye_inner'],
-    #     ['left_eye_inner', 'nose'],
-    #     ['nose', 'right_eye_inner'],
-    #     ['right_eye_inner', 'right_eye_outer'],
-    #     ['right_eye_outer', 'right_ear']
-    # ]
+    #(using the DLC 3.0 installation, following these instructions https://github.com/DeepLabCut/DeepLabCut/pull/2613)
 
-    bodyparts = [
-        "nose",
-        "right_eye_inner",
-        "left_eye_inner"
-    ]
+    from dlc_utils.project_config import ProjectConfig, DataConfig, TrainingConfig
 
-    skeleton = [
-        ["nose", "right_eye_inner"],
-        ["nose", "left_eye_inner"]
-    ]
-    
-    # Run the pipeline
-    project_info = run_dlc_pipeline(
-        project_name="freemocap_sample_data_test",
-        bodyparts=bodyparts,
-        source_data_path=(Path.home() / "freemocap_data/recording_sessions/freemocap_test_data"),
-        labels_csv_path=Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/skellyclicker_data/2025-04-02_15-02-27_skellyclicker_output.csv"),
-        output_directory=Path("/Users/philipqueen/DLCtest/"),
-        experimenter="philip",
-        skeleton=skeleton
+    project_config = ProjectConfig(
+        name = "sample_data_test",
+        experimenter= "user", #can probably look into removing the experimenter/scorer entirely
+        working_directory= Path(r"C:\Users\Aaron\Documents"), #optional, defaults to CWD otherwise
+        bodyparts=[
+            'left_ear', 'left_eye_inner', 'left_eye_outer', 
+            'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
+        ],
+        skeleton=[
+            ['left_ear', 'left_eye_outer'],
+            ['left_eye_outer', 'left_eye_inner'],
+            ['left_eye_inner', 'nose'],
+            ['nose', 'right_eye_inner'],
+            ['right_eye_inner', 'right_eye_outer'],
+            ['right_eye_outer', 'right_ear']
+        ], #skeleton is optional 
     )
     
-    print(f"Project created: {project_info['project_name']}")
-    print(f"\tConfig path: {project_info['config_path']}")
+    data_config = DataConfig(
+        folder_of_videos= Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data\synchronized_videos"),
+        labels_csv_path= Path(r"C:\Users\Aaron\Downloads\output.csv")
+    )
+
+    training_config = TrainingConfig(
+        model_type = "resnet_50",
+        epochs = 200, #this is the new equivalent of 'maxiters' for PyTorch (200 is their default)
+        save_epochs= 50, #this is the new equivalent of 'save_iters' for PyTorch
+        batch_size = 2 #this seems to be similar to batch/multi processing (higher number = faster processing if your gpu can handle it?)
+    )
+
+    # Run the pipeline
+    project_info = run_dlc_pipeline(
+        project=project_config,
+        data=data_config,
+        training=training_config
+    )
+    
+    print(f"Project created: {project_info['project_name']}")            
+
+    ##NOTE- the 'training-dataset' folder is tagged with the 'date' from the config yaml, as per DLC. This is dumb, we should change it - but that would require also pulling out the 'create_training_dataset' function from deeplabcut

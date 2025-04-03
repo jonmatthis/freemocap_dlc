@@ -6,6 +6,7 @@ import deeplabcut
 from deeplabcut.utils import auxiliaryfunctions
 
 from scholl_lab.dlc_utils.create_dlc_project_data import fill_in_labelled_data_folder
+from scholl_lab.dlc_utils.project_config import DataConfig, ProjectConfig, TrainingConfig
 
 logger = logging.getLogger(__name__)
 
@@ -13,12 +14,19 @@ logger = logging.getLogger(__name__)
 def iterate_model(
     config_path: str | Path,
     clicker_csv_path: str | Path,
-    source_data_path: str | Path,
-    experimenter: str, 
-    overwrite_csv: bool = True,
+    training_config: TrainingConfig | None = None,
 ) -> None:
     config = auxiliaryfunctions.read_config(config_path)
-    project_path = Path(config["project_path"])  # load from yaml here
+    project = ProjectConfig.from_config(config)
+    data = DataConfig.from_config(config)
+    if training_config:
+        training = training_config
+    else:
+        training = TrainingConfig.from_config(config)
+
+    data.labels_csv_path = Path(clicker_csv_path)
+    
+    project_path = Path(project.working_directory)
 
     shuffles_path = project_path / "training-datasets"
     results_path = project_path / "dlc-models"
@@ -39,19 +47,16 @@ def iterate_model(
     logger.info(f"Created model directory: {model_iteration_path}")
 
     auxiliaryfunctions.write_config(config_path, config)
+    data.update_config_yaml(config_path)
     logger.info(f"Saved updated config file: {config_path}")
 
-    if overwrite_csv:
-        output_directory = Path(config_path).parent
-        stored_csv_path = list(output_directory.glob("*.csv"))[0] # TODO: eventually store this in config
-        shutil.copy(clicker_csv_path, stored_csv_path)
 
     logger.info("Processing labeled frames...")
     labeled_frames = fill_in_labelled_data_folder(
-        path_to_recording=Path(source_data_path),
+        path_to_videos_for_training=Path(data.folder_of_videos),
         path_to_dlc_project_folder=project_path,
-        path_to_image_labels_csv=Path(clicker_csv_path),
-        scorer_name=experimenter,
+        path_to_image_labels_csv=Path(data.labels_csv_path),
+        scorer_name=project.experimenter,
     )
 
     # make new training dataset
@@ -64,16 +69,14 @@ def iterate_model(
     logger.info("Training network...")
     deeplabcut.train_network(
         config=config_path,
-        epochs=2,
+        epochs=training.epochs,
+        save_epochs=training.save_epochs,
+        batch_size=training.batch_size
     )
 
 
 if __name__ == "__main__":
     config_path = "/Users/philipqueen/DLCtest/freemocap_sample_data_test_philip_20250402/config.yaml"
     clicker_csv_path = "/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/skellyclicker_data/2025-04-03_12-15-39_skellyclicker_output.csv"
-    source_data_path = (
-        Path.home() / "freemocap_data/recording_sessions/freemocap_test_data"
-    )
-    experimenter = "philip"
 
-    iterate_model(config_path, clicker_csv_path, source_data_path, experimenter)
+    iterate_model(config_path=config_path, clicker_csv_path=clicker_csv_path)

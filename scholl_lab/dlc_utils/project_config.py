@@ -30,11 +30,9 @@ class ProjectConfig:
             self.working_directory = Path.cwd()
 
         self.working_directory.mkdir(exist_ok=True, parents=True)
-
+    
     @classmethod
-    def from_config_yaml(cls, config_path: str | Path) -> "ProjectConfig":
-        config = auxiliaryfunctions.read_config(config_path)
-
+    def from_config(cls, config: dict) -> "ProjectConfig":
         return cls(
             name=config["Task"],
             experimenter=config["scorer"],
@@ -42,6 +40,12 @@ class ProjectConfig:
             bodyparts=config["bodyparts"],
             skeleton=config["skeleton"],
         )
+
+    @classmethod
+    def from_config_yaml(cls, config_path: str | Path) -> "ProjectConfig":
+        config = auxiliaryfunctions.read_config(config_path)
+
+        return cls.from_config(config)
 
 
 @dataclass
@@ -58,13 +62,17 @@ class DataConfig:
             self.labels_csv_path = Path(self.labels_csv_path)
 
     @classmethod
-    def from_config_yaml(cls, config_path: str | Path) -> "DataConfig":
-        config = auxiliaryfunctions.read_config(config_path)
-
+    def from_config(cls, config: dict) -> "DataConfig":
         return cls(
             folder_of_videos=config["skelly_clicker_folder_of_videos"],
             labels_csv_path=config["skelly_clicker_labels_csv_path"],
         )
+
+    @classmethod
+    def from_config_yaml(cls, config_path: str | Path) -> "DataConfig":
+        config = auxiliaryfunctions.read_config(config_path)
+
+        return cls.from_config(config)
 
     def update_config_yaml(self, config_path: str | Path):
         auxiliaryfunctions.edit_config(
@@ -87,17 +95,21 @@ class TrainingConfig:
     epochs: int = 200  # this is the new equivalent of 'maxiters' for PyTorch (200 is their default)
     save_epochs: int = 20  # this is the new equivalent of 'save_iters' for PyTorch
     batch_size: int = 1  # this seems to be similar to batch/multi processing (higher number = faster if your gpu can handle it?)
-
+    
     @classmethod
-    def from_config_yaml(cls, config_path: str | Path, epochs: int = 200, save_epochs: int = 20) -> "TrainingConfig":
-        config = auxiliaryfunctions.read_config(config_path)
-
+    def from_config(cls, config: dict, epochs: int = 200, save_epochs: int = 20) -> "TrainingConfig":
         return cls(
             model_type=config["default_net_type"],
             epochs=config.get("skelly_clicker_epochs", epochs),
             save_epochs=config.get("skelly_clicker_save_epochs", save_epochs),
             batch_size=config["batch_size"],
         )
+    
+    @classmethod
+    def from_config_yaml(cls, config_path: str | Path, epochs: int = 200, save_epochs: int = 20) -> "TrainingConfig":
+        config = auxiliaryfunctions.read_config(config_path)
+
+        return cls.from_config(config, epochs, save_epochs)
     
     def update_config_yaml(self, config_path: str | Path):
         auxiliaryfunctions.edit_config(

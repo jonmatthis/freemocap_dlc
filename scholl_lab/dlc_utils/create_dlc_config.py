@@ -385,10 +385,10 @@ if __name__ == '__main__':
     from pathlib import Path
 
     create_new_project(
-    project='your-project-name',
-    experimenter='Aaron',
-    working_directory= Path(r'C:\Users\Aaron\Documents'),
-    bodyparts=['head', 'shoulder', 'elbow', 'wrist', 'finger'],
-    skeleton=[['head', 'shoulder'], ['shoulder', 'elbow'], 
-              ['elbow', 'wrist'], ['wrist', 'finger']]
-)
+        project='your-project-name',
+        experimenter='Aaron',
+        working_directory= Path(r'C:\Users\Aaron\Documents'),
+        bodyparts=['head', 'shoulder', 'elbow', 'wrist', 'finger'],
+        skeleton=[['head', 'shoulder'], ['shoulder', 'elbow'], 
+                ['elbow', 'wrist'], ['wrist', 'finger']]
+    )

@@ -1,4 +1,4 @@
-import os
+import shutil
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -15,13 +15,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_dlc_pipeline(
-    project_name, 
-    bodyparts,
-    source_data_path,
-    labels_csv_path,
-    output_directory=None,
-    experimenter="user",
-    skeleton=None,
+    project_name: str, 
+    bodyparts: list[str],
+    source_data_path: str | Path,
+    labels_csv_path: str | Path,
+    output_directory: str | Path | None = None,
+    experimenter: str = "user",
+    skeleton: list[list[str]] | None = None,
 ):
     """
     Run the complete DeepLabCut pipeline from project creation to training.
@@ -59,6 +59,14 @@ def run_dlc_pipeline(
     
     source_data_path = Path(source_data_path)
     labels_csv_path = Path(labels_csv_path)
+
+    # TODO: create copy of skellyclicker CSV in dlc directory for easy loading on iterations
+    new_csv_path = output_directory / labels_csv_path.name
+    try:
+        shutil.copy2(labels_csv_path, new_csv_path)
+    except (IOError, FileNotFoundError, FileExistsError) as e:
+        logger.error(f"Error copying CSV file: {e}")
+        logger.warning(f"Unable to copy labels CSV file to {new_csv_path}")
     
     # Make sure output directory exists
     output_directory.mkdir(exist_ok=True, parents=True)
@@ -101,6 +109,7 @@ def run_dlc_pipeline(
     
     logger.info(f"Pipeline completed for project: {full_project_name}")
     logger.info(f"Project path: {project_path}")
+
     
     return {
         "project_name": full_project_name,

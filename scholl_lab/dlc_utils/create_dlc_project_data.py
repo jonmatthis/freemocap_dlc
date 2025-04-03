@@ -45,6 +45,8 @@ def fill_in_labelled_data_folder(path_to_recording: Path,
         dlc_video_folder_path = path_to_dlc_project_folder / 'labeled-data' / video_name_wo_extension
         dlc_video_folder_path.mkdir(parents=True, exist_ok=True)
 
+        # TODO: be able to look in different locations to handle multiple video folders
+        # Or is it better to run this function for each video set (each with own CSV?)
         video_path = path_to_videos_for_training / f"{video_name}"
         if not video_path.exists():
             raise FileNotFoundError(f"Video file not found: {video_path}")

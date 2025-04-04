@@ -1,10 +1,11 @@
 from datetime import datetime
+from pathlib import Path
 
 def create_new_project(
     project: str,
     experimenter: str,
     videos: list[str] | None = None,
-    working_directory: str | None = None,
+    working_directory: str | Path | None = None,
     copy_videos: bool = False,
     videotype: str = "",
     multianimal: bool = False,
@@ -97,7 +98,6 @@ def create_new_project(
     import os
     import shutil
     import warnings
-    from pathlib import Path
 
     from deeplabcut import DEBUG
     from deeplabcut.core.engine import Engine
@@ -385,10 +385,10 @@ if __name__ == '__main__':
     from pathlib import Path
 
     create_new_project(
-    project='your-project-name',
-    experimenter='Aaron',
-    working_directory= Path(r'C:\Users\Aaron\Documents'),
-    bodyparts=['head', 'shoulder', 'elbow', 'wrist', 'finger'],
-    skeleton=[['head', 'shoulder'], ['shoulder', 'elbow'], 
-              ['elbow', 'wrist'], ['wrist', 'finger']]
-)
+        project='your-project-name',
+        experimenter='Aaron',
+        working_directory= Path(r'C:\Users\Aaron\Documents'),
+        bodyparts=['head', 'shoulder', 'elbow', 'wrist', 'finger'],
+        skeleton=[['head', 'shoulder'], ['shoulder', 'elbow'], 
+                ['elbow', 'wrist'], ['wrist', 'finger']]
+    )

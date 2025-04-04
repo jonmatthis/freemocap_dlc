@@ -59,9 +59,14 @@ def run_dlc_pipeline(
         save_epochs=training.save_epochs,
         batch_size=training.batch_size
     )
+
+    logger.info(f"Saving config values to {config_path}")
+    training.update_config_yaml(config_path)
+    data.update_config_yaml(config_path)
     
     logger.info(f"Pipeline completed for project: {full_project_name}")
     logger.info(f"Project path: {project_path}")
+
     
     return {
         "project_name": full_project_name,
@@ -71,32 +76,26 @@ def run_dlc_pipeline(
     }
 
 if __name__ == "__main__":
-
     #(using the DLC 3.0 installation, following these instructions https://github.com/DeepLabCut/DeepLabCut/pull/2613)
 
     from dlc_utils.project_config import ProjectConfig, DataConfig, TrainingConfig
 
     project_config = ProjectConfig(
-        name = "sample_data_test",
+        name = "sample_data_test2",
         experimenter= "user", #can probably look into removing the experimenter/scorer entirely
-        working_directory= Path(r"C:\Users\Aaron\Documents"), #optional, defaults to CWD otherwise
+        working_directory= Path("/Users/philipqueen/DLCtest"), #optional, defaults to CWD otherwise
         bodyparts=[
-            'left_ear', 'left_eye_inner', 'left_eye_outer', 
-            'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
+            'right_eye_inner', 'left_eye_inner', 'nose',
         ],
         skeleton=[
-            ['left_ear', 'left_eye_outer'],
-            ['left_eye_outer', 'left_eye_inner'],
             ['left_eye_inner', 'nose'],
             ['nose', 'right_eye_inner'],
-            ['right_eye_inner', 'right_eye_outer'],
-            ['right_eye_outer', 'right_ear']
         ], #skeleton is optional 
     )
     
     data_config = DataConfig(
-        folder_of_videos= Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data\synchronized_videos"),
-        labels_csv_path= Path(r"C:\Users\Aaron\Downloads\output.csv")
+        folder_of_videos= Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/synchronized_videos/"),
+        labels_csv_path= Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/skellyclicker_data/2025-04-03_17-25-38_skellyclicker_output.csv")
     )
 
     training_config = TrainingConfig(

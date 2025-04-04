@@ -81,26 +81,21 @@ if __name__ == "__main__":
     from dlc_utils.project_config import ProjectConfig, DataConfig, TrainingConfig
 
     project_config = ProjectConfig(
-        name = "sample_data_test",
+        name = "sample_data_test2",
         experimenter= "user", #can probably look into removing the experimenter/scorer entirely
-        working_directory= Path(r"C:\Users\Aaron\Documents"), #optional, defaults to CWD otherwise
+        working_directory= Path("/Users/philipqueen/DLCtest"), #optional, defaults to CWD otherwise
         bodyparts=[
-            'left_ear', 'left_eye_inner', 'left_eye_outer', 
-            'nose', 'right_ear', 'right_eye_inner', 'right_eye_outer'
+            'right_eye_inner', 'left_eye_inner', 'nose',
         ],
         skeleton=[
-            ['left_ear', 'left_eye_outer'],
-            ['left_eye_outer', 'left_eye_inner'],
             ['left_eye_inner', 'nose'],
             ['nose', 'right_eye_inner'],
-            ['right_eye_inner', 'right_eye_outer'],
-            ['right_eye_outer', 'right_ear']
         ], #skeleton is optional 
     )
     
     data_config = DataConfig(
-        folder_of_videos= Path(r"C:\Users\Aaron\FreeMocap_Data\recording_sessions\freemocap_test_data\synchronized_videos"),
-        labels_csv_path= Path(r"C:\Users\Aaron\Downloads\output.csv")
+        folder_of_videos= Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/synchronized_videos/"),
+        labels_csv_path= Path("/Users/philipqueen/freemocap_data/recording_sessions/freemocap_test_data/skellyclicker_data/2025-04-03_17-25-38_skellyclicker_output.csv")
     )
 
     training_config = TrainingConfig(

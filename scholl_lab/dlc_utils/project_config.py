@@ -64,8 +64,8 @@ class DataConfig:
     @classmethod
     def from_config(cls, config: dict) -> "DataConfig":
         return cls(
-            folder_of_videos=config["skelly_clicker_folder_of_videos"],
-            labels_csv_path=config["skelly_clicker_labels_csv_path"],
+            folder_of_videos=config["skellyclicker_folder_of_videos"],
+            labels_csv_path=config["skellyclicker_labels_csv_path"],
         )
 
     @classmethod
@@ -78,8 +78,8 @@ class DataConfig:
         auxiliaryfunctions.edit_config(
             config_path,
             {
-                "skelly_clicker_folder_of_videos": str(self.folder_of_videos),
-                "skelly_clicker_labels_csv_path": str(self.labels_csv_path),
+                "skellyclicker_folder_of_videos": str(self.folder_of_videos),
+                "skellyclicker_labels_csv_path": str(self.labels_csv_path),
             },
         )
 
@@ -100,8 +100,8 @@ class TrainingConfig:
     def from_config(cls, config: dict, epochs: int = 200, save_epochs: int = 20) -> "TrainingConfig":
         return cls(
             model_type=config["default_net_type"],
-            epochs=config.get("skelly_clicker_epochs", epochs),
-            save_epochs=config.get("skelly_clicker_save_epochs", save_epochs),
+            epochs=config.get("skellyclicker_epochs", epochs),
+            save_epochs=config.get("skellyclicker_save_epochs", save_epochs),
             batch_size=config["batch_size"],
         )
     
@@ -116,8 +116,8 @@ class TrainingConfig:
             config_path,
             {
                 "default_net_type": self.model_type,
-                "skelly_clicker_epochs": self.epochs,
-                "skelly_clicker_save_epochs": self.save_epochs,
+                "skellyclicker_epochs": self.epochs,
+                "skellyclicker_save_epochs": self.save_epochs,
                 "batch_size": self.batch_size,
             },
         )
